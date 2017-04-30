@@ -1,0 +1,6 @@
+syntax:glob
+*.pdf
+*.fdf
+*.json
+*.csv
+*.ods
