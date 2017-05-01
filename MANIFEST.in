@@ -1,1 +1,2 @@
-include *.txt *.rst *.csv *.ods
+include *.txt *.rst
+include example/*.csv example/*.ods
