@@ -66,7 +66,6 @@ allows you to do so with the following steps:
         7,Spouse's Last Name,Public,,
         8,SSN,132458697,132-45-8697,
         9,Address,5776 Winding Ln,,
-        10,,,,
         11,,"Springfield, MA",,
         18,Filing status,MJ,,
         24,Exemption - self,1,,
