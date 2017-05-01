@@ -1,6 +1,13 @@
 syntax:glob
+*.py[cdo]
 *.pdf
 *.fdf
 *.json
 *.csv
 *.ods
+.~lock.*
+__pycache__/
+dist/
+build/
+*.egg/
+*.egg-info/
