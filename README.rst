@@ -115,7 +115,7 @@ allows you to do so with the following steps:
         f1040sce.pdf,Schedule C-EZ,,,
         0,Name,Susie Public,,
         1,SSN,132-45-8697,,
-        9,Line F,No,,
+        9,Line F,2,No,
         2,Line A,Artist,Principle business or profession,
         3,Line B,711510,Business Code,
         13,Line 1,"22,000",gross receipts,
