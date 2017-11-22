@@ -52,11 +52,11 @@ def inspect_pdf_fields(form_name):
     num = itertools.count()
     fields = {}
     for line in p.stdout.splitlines():
-        content = line.strip().split(" ")
+        content = line.split(": ", 1)
         if ["---"] == content:
             fields[str(next(num))] = field_data = {}
         elif 2 == len(content):
-            key = content[0][5:-1].lower()
+            key = content[0][5:].lower()
             if "stateoption" == key:
                 field_data.setdefault(key, []).append(content[1])
             else:
