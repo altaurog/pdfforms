@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import csv
 import io
@@ -6,6 +8,7 @@ import json
 import os
 import sys
 from subprocess import run, PIPE
+
 
 def inspect_pdfs(args):
     try:
@@ -109,9 +112,9 @@ def fdf_fields(fields, data):
 
 def fill_form(input_path, fdf, output_path):
     cmd = ["pdftk", input_path,
-            "fill_form", "-",
-            "output", output_path, "flatten"]
-    run(cmd, input=fdf, check=True, encoding="utf-8")
+           "fill_form", "-",
+           "output", output_path, "flatten"]
+    run(cmd, input=fdf.encode("utf-8"), check=True)
 
 
 def generate_test_data(pdf_files, field_defs):
@@ -137,19 +140,19 @@ def parse_cli(*args):
     inspect.set_defaults(func=inspect_pdfs)
     inspect.add_argument("pdf_file", nargs="+")
     inspect.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file in which to save field defs")
+                         help="file in which to save field defs")
     inspect.add_argument("-p", "--prefix", default="test/", type=make_path,
-                            help="location/prefix to which to save test files")
+                         help="location/prefix to which to save test files")
 
     fill = subparsers.add_parser("fill")
     fill.set_defaults(func=fill_pdfs)
     fill.add_argument("data_file", default='-',
-                            type=argparse.FileType('r', encoding='utf-8'),
-                            help="csv input data file")
+                      type=argparse.FileType('r', encoding='utf-8'),
+                      help="csv input data file")
     fill.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file from which to load field defs")
+                      help="file from which to load field defs")
     fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
-                            help="location/prefix to which to save filled forms")
+                      help="location/prefix to which to save filled forms")
     return parser.parse_args(*args)
 
 
