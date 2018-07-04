@@ -7,6 +7,7 @@ import os
 import sys
 from subprocess import run, PIPE
 
+
 def inspect_pdfs(args):
     try:
         with open(args.field_defs, "r") as f:
@@ -111,7 +112,7 @@ def fill_form(input_path, fdf, output_path):
     cmd = ["pdftk", input_path,
             "fill_form", "-",
             "output", output_path, "flatten"]
-    run(cmd, input=fdf, check=True, encoding="utf-8")
+    run(cmd, input=fdf.encode("utf-8"), check=True)
 
 
 def generate_test_data(pdf_files, field_defs):
