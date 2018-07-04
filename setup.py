@@ -2,7 +2,7 @@ from os.path import join, dirname
 from setuptools import setup
 
 package_name = "pdfforms"
-package_version = "1.0.0"
+package_version = "1.1.0"
 base_dir = dirname(__file__)
 
 def read(filename):
@@ -21,6 +21,7 @@ setup(
     packages = [package_name],
     entry_points = {'console_scripts': ['pdfforms=pdfforms.pdfforms:main']},
     classifiers = [
+        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",

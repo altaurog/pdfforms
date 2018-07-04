@@ -17,7 +17,7 @@ Features
 Requirements
 ------------
 
-pdfforms requires Python 3.6 and `pdftk`_, which does all the real work.
+pdfforms requires Python 3.5 or higher and `pdftk`_, which does all the real work.
 
 .. _pdftk: https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
 
