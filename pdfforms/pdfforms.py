@@ -68,6 +68,8 @@ def inspect_pdf_fields(form_name):
 
 def fill_forms(path_func, field_defs, data):
     for filepath, formdata in data.items():
+        if not formdata:
+            continue
         yield filepath
         output_path = path_func(filepath)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
