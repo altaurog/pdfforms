@@ -20,7 +20,7 @@ def inspect_pdfs(args):
     with open(args.field_defs, "w") as f:
         json.dump(field_defs, f, indent=4)
     test_data = generate_test_data(args.pdf_file, field_defs)
-    fg = fill_forms(args.prefix, field_defs, test_data)
+    fg = fill_forms(args.prefix, field_defs, test_data, True)
     for filepath in fg:
         print(filepath)
 
@@ -28,7 +28,8 @@ def inspect_pdfs(args):
 def fill_pdfs(args):
     form_data = read_data(args.data_file)
     field_defs = load_field_defs(args.field_defs)
-    fg = fill_forms(args.prefix, field_defs, form_data)
+    flatten = not args.no_flatten
+    fg = fill_forms(args.prefix, field_defs, form_data, flatten)
     for filepath in fg:
         print(filepath)
 
@@ -66,7 +67,7 @@ def inspect_pdf_fields(form_name):
     return fields
 
 
-def fill_forms(path_func, field_defs, data):
+def fill_forms(path_func, field_defs, data, flatten=True):
     for filepath, formdata in data.items():
         if not formdata:
             continue
@@ -74,7 +75,7 @@ def fill_forms(path_func, field_defs, data):
         output_path = path_func(filepath)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         fdf_str = generate_fdf(field_defs[filepath], formdata)
-        fill_form(filepath, fdf_str, output_path)
+        fill_form(filepath, fdf_str, output_path, flatten)
 
 
 def generate_fdf(fields, data):
@@ -111,10 +112,12 @@ def fdf_fields(fields, data):
                 yield template.format(field_name=field_name, data=d)
 
 
-def fill_form(input_path, fdf, output_path):
+def fill_form(input_path, fdf, output_path, flatten):
     cmd = ["pdftk", input_path,
             "fill_form", "-",
-            "output", output_path, "flatten"]
+            "output", output_path]
+    if flatten:
+        cmd.append("flatten")
     run(cmd, input=fdf.encode("utf-8"), check=True)
 
 
@@ -154,6 +157,8 @@ def parse_cli(*args):
                             help="file from which to load field defs")
     fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
                             help="location/prefix to which to save filled forms")
+    fill.add_argument("--no-flatten", action="store_true",
+                            help="do not flatten pdf output (leaves form fillable)")
     return parser.parse_args(*args)
 
 

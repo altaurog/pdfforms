@@ -2,7 +2,7 @@ from os.path import join, dirname
 from setuptools import setup
 
 package_name = "pdfforms"
-package_version = "1.1.0"
+package_version = "1.2.0"
 base_dir = dirname(__file__)
 
 def read(filename):
@@ -23,7 +23,8 @@ setup(
     classifiers = [
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
-        "Development Status :: 4 - Beta",
+        "Programming Language :: Python :: 3.7",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Intended Audience :: End Users/Desktop",
