@@ -162,8 +162,8 @@ def parse_cli(*args):
     return parser.parse_args(*args)
 
 
-def main():
-    args = parse_cli(sys.argv[1:])
+def main(argv=None):
+    args = parse_cli(argv or sys.argv[1:])
     args.func(args)
 
 
