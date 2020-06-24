@@ -138,7 +138,9 @@ def make_path(prefix):
 
 def parse_cli(*args):
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
+    # TODO: Make this a parameter of add_subparsers() in Python 3.7+
+    subparsers.required = True
 
     inspect = subparsers.add_parser("inspect")
     inspect.set_defaults(func=inspect_pdfs)
