@@ -137,7 +137,7 @@ def make_path(prefix):
 
 
 def parse_cli(*args):
-    parser = argparse.ArgumentParser(prog="forms")
+    parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
     inspect = subparsers.add_parser("inspect")
