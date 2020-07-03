@@ -2,7 +2,7 @@ from os.path import join, dirname
 from setuptools import setup
 
 package_name = "pdfforms"
-package_version = "1.2.0"
+package_version = "1.2.1"
 base_dir = dirname(__file__)
 
 def read(filename):
