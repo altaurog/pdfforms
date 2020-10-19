@@ -53,6 +53,9 @@ allows you to do so with the following steps:
    column should contain the data to be written into the field.  The rest
    of the sheet is ignored, so you can use it for notes, calculations, etc.
 
+   pdfforms is case sensitive!  The file name in the spreadsheet must match
+   exactly the name of the pdf to be filled.
+
    Below is an example spreadsheet for a (fictional) 2016
    tax return.
 
