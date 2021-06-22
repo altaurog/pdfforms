@@ -51,11 +51,14 @@ def load_sheet(file_name, sheet_name):
 
 def read_sheet(sheet):
     form_data = {}
+    form_name = None
     for row in sheet:
-        if row[0] and row[0].endswith(".pdf"):
-            form_data[row[0]] = f = {}
-        elif 2 < len(row) and isinstance(row[0], int) and row[2]:
-            f[str(row[0])] = row[2]
+        if isinstance(row[0], str) and row[0].endswith(".pdf"):
+            form_name = row[0]
+            form_data[form_name] = {}
+        elif form_name and  2 < len(row) and isinstance(row[0], int) and row[2]:
+            field = str(row[0])
+            form_data[form_name][field] = row[2]
     return form_data
 
 
