@@ -20,7 +20,7 @@ setup(
     license = 'MIT',
     url = "https://github.com/altaurog/pdfforms",
     packages = [package_name],
-    entry_points = {'console_scripts': ['pdfforms=pdfforms.pdfforms:main']},
+    entry_points = {'console_scripts': ['pdfforms=pdfforms.cli:main']},
     install_requires = ["pyexcel"],
     extras_require = {
         "csv": ["pyexcel-io"],

@@ -1,36 +1,40 @@
-#!/usr/bin/env python3
-import argparse
 import io
 import itertools
 import json
 import os
-import sys
-from subprocess import run, PIPE
+from subprocess import PIPE, run
 
 import pyexcel
 
-def inspect_pdfs(args):
+
+def inspect(pdf_files, field_defs_file="fields.json", prefix="test/"):
     try:
-        with open(args.field_defs, "r") as f:
+        with open(field_defs_file, "r") as f:
             field_defs = json.load(f)
     except OSError:
         field_defs = {}
-    for filename in args.pdf_file:
+    for filename in pdf_files:
         field_defs[filename] = inspect_pdf_fields(filename)
-    with open(args.field_defs, "w") as f:
+    with open(field_defs_file, "w") as f:
         json.dump(field_defs, f, indent=4)
-    test_data = generate_test_data(args.pdf_file, field_defs)
-    fg = fill_forms(args.prefix, field_defs, test_data, True)
+    test_data = generate_test_data(pdf_files, field_defs)
+    fg = fill_forms(prefix, field_defs, test_data, True)
     for filepath in fg:
         print(filepath)
 
 
-def fill_pdfs(args):
-    sheet = load_sheet(args.data_file, args.sheet_name)
+def fill(
+        data_file,
+        sheet_name=None,
+        field_defs_file="fields.json",
+        prefix="filled/",
+        no_flatten=False,
+    ):
+    sheet = load_sheet(data_file, sheet_name)
     form_data = read_sheet(sheet)
-    field_defs = load_field_defs(args.field_defs)
-    flatten = not args.no_flatten
-    fg = fill_forms(args.prefix, field_defs, form_data, flatten)
+    field_defs = load_field_defs(field_defs_file)
+    flatten = not no_flatten
+    fg = fill_forms(prefix, field_defs, form_data, flatten)
     for filepath in fg:
         print(filepath)
 
@@ -141,44 +145,3 @@ def generate_test_data(pdf_files, field_defs):
             if "Text" == field_def.get("type"):
                 d[field_id] = field_id
     return data
-
-
-def make_path(prefix):
-    return lambda path: prefix + os.path.basename(path)
-
-
-def parse_cli(*args):
-    parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
-    # TODO: Make this a parameter of add_subparsers() in Python 3.7+
-    subparsers.required = True
-
-    inspect = subparsers.add_parser("inspect")
-    inspect.set_defaults(func=inspect_pdfs)
-    inspect.add_argument("pdf_file", nargs="+")
-    inspect.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file in which to save field defs")
-    inspect.add_argument("-p", "--prefix", default="test/", type=make_path,
-                            help="location/prefix to which to save test files")
-
-    fill = subparsers.add_parser("fill")
-    fill.set_defaults(func=fill_pdfs)
-    fill.add_argument("data_file", default='-',
-                            type=argparse.FileType('r', encoding='utf-8'),
-                            help="csv input data file")
-    fill.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file from which to load field defs")
-    fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
-                            help="location/prefix to which to save filled forms")
-    fill.add_argument("--no-flatten", action="store_true",
-                            help="do not flatten pdf output (leaves form fillable)")
-    return parser.parse_args(*args)
-
-
-def main(argv=None):
-    args = parse_cli(argv or sys.argv[1:])
-    args.func(args)
-
-
-if __name__ == "__main__":
-    main()
