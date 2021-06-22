@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import csv
 import io
 import itertools
 import json
@@ -8,6 +7,7 @@ import os
 import sys
 from subprocess import run, PIPE
 
+import pyexcel
 
 def inspect_pdfs(args):
     try:
@@ -26,7 +26,8 @@ def inspect_pdfs(args):
 
 
 def fill_pdfs(args):
-    form_data = read_data(args.data_file)
+    sheet = load_sheet(args.data_file, args.sheet_name)
+    form_data = read_sheet(sheet)
     field_defs = load_field_defs(args.field_defs)
     flatten = not args.no_flatten
     fg = fill_forms(args.prefix, field_defs, form_data, flatten)
@@ -34,12 +35,22 @@ def fill_pdfs(args):
         print(filepath)
 
 
-def read_data(instream):
+def load_sheet(file_name, sheet_name):
+    kwargs = {
+        "file_name": file_name,
+        "column_limit": 3,
+    }
+    if sheet_name:
+        kwargs["sheet_name"] = sheet_name
+    return pyexcel.get_sheet(**kwargs)
+
+
+def read_sheet(sheet):
     form_data = {}
-    for row in csv.reader(instream):
-        if row and row[0].endswith(".pdf"):
+    for row in sheet:
+        if row[0] and row[0].endswith(".pdf"):
             form_data[row[0]] = f = {}
-        elif 2 < len(row) and row[0] and row[2]:
+        elif 2 < len(row) and isinstance(row[0], int) and row[2]:
             f[str(row[0])] = row[2]
     return form_data
 

@@ -1,4 +1,5 @@
-from os.path import join, dirname
+from os.path import dirname, join
+
 from setuptools import setup
 
 package_name = "pdfforms"
@@ -20,6 +21,12 @@ setup(
     url = "https://github.com/altaurog/pdfforms",
     packages = [package_name],
     entry_points = {'console_scripts': ['pdfforms=pdfforms.pdfforms:main']},
+    install_requires = ["pyexcel"],
+    extras_require = {
+        "csv": ["pyexcel-io"],
+        "xlsx": ["pyexcel-xlsx"],
+        "ods": ["pyexcel-ods"],
+    },
     classifiers = [
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
