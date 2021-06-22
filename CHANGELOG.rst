@@ -1,11 +1,11 @@
 Changelog
------------
+==========
 
 1.2.1
 """""
 :date: 3 July, 2020
 
-* Don’t crash when subcommand not supplied.
+* Don’t crash when subcommand not supplied (Thanks @PiDelport for the PR)
 
 1.2.0
 """""
