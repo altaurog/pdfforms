@@ -7,8 +7,8 @@ package_version = "1.2.1"
 base_dir = dirname(__file__)
 
 def read(filename):
-    f = open(join(base_dir, filename))
-    return f.read()
+    with open(join(base_dir, filename)) as f:
+        return f.read()
 
 setup(
     name = package_name,
