@@ -1,3 +1,4 @@
+"packaging"
 from os.path import dirname, join
 
 from setuptools import setup
@@ -7,6 +8,7 @@ package_version = "1.2.1"
 base_dir = dirname(__file__)
 
 def read(filename):
+    "read file contents"
     with open(join(base_dir, filename)) as f:
         return f.read()
 

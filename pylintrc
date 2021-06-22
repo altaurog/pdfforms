@@ -9,8 +9,7 @@ disable=too-few-public-methods,
   invalid-name,
   bad-continuation,
   inconsistent-return-statements,
-  misplaced-comparison-constant,
-  missing-docstring
+  misplaced-comparison-constant
 
 [DESIGN]
 

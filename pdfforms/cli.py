@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"cli to inspect and fill pdf fillable forms"
 import argparse
 import os
 import sys
@@ -33,11 +34,12 @@ def fill_pdfs(args):
     )
 
 
-def make_path(prefix):
+def _make_path(prefix):
     return lambda path: prefix + os.path.basename(path)
 
 
 def parse_cli(*args):
+    "parse command line arguments"
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
     # TODO: Make this a parameter of add_subparsers() in Python 3.7+
@@ -49,7 +51,7 @@ def parse_cli(*args):
     inspect.add_argument("-f", "--field-defs", default="fields.json",
                             help="file in which to save field defs",
                             dest="field_defs_file")
-    inspect.add_argument("-p", "--prefix", default="test/", type=make_path,
+    inspect.add_argument("-p", "--prefix", default="test/", type=_make_path,
                             help="location/prefix to which to save test files")
 
     fill = subparsers.add_parser("fill")
@@ -59,7 +61,7 @@ def parse_cli(*args):
     fill.add_argument("-f", "--field-defs", default="fields.json",
                             help="file from which to load field defs",
                             dest="field_defs_file",)
-    fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
+    fill.add_argument("-p", "--prefix", default="filled/", type=_make_path,
                             help="location/prefix to which to save filled forms")
     fill.add_argument("--round", action="store_true",
                             help="round floating-point numbers",
@@ -75,6 +77,7 @@ def parse_cli(*args):
 
 
 def main(argv=None):
+    "cli entry point"
     args = parse_cli(argv or sys.argv[1:])
     args.func(args)
 

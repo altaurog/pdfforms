@@ -1,3 +1,4 @@
+"library functions to inspect and fill pdf fillable forms"
 import functools
 import io
 import itertools
@@ -9,6 +10,7 @@ import pyexcel
 
 
 def round_float(value):
+    "round float to int"
     try:
         return round(value)
     except TypeError:
@@ -16,6 +18,7 @@ def round_float(value):
 
 
 def comma_format(value):
+    "add thousands separators to numbers"
     try:
         return f"{value:,}"
     except ValueError:
@@ -23,6 +26,7 @@ def comma_format(value):
 
 
 def inspect(pdf_files, field_defs_file="fields.json", prefix="test/"):
+    "inspect pdf forms, extract field data and fill with field numbers"
     try:
         with open(field_defs_file, "r") as f:
             field_defs = json.load(f)
@@ -47,6 +51,7 @@ def fill(
         no_flatten=False,
         value_transforms=None,
     ):
+    "fill pdf forms with data from a spreadsheet"
     sheet = load_sheet(data_file, sheet_name, pyexcel_library)
     form_data = read_sheet(sheet, value_transforms)
     field_defs = load_field_defs(field_defs_file)
@@ -57,6 +62,7 @@ def fill(
 
 
 def load_sheet(file_name, sheet_name, pyexcel_library):
+    "load a spreadsheet"
     kwargs = {
         "file_name": file_name,
         "column_limit": 3,
@@ -69,6 +75,7 @@ def load_sheet(file_name, sheet_name, pyexcel_library):
 
 
 def read_sheet(sheet, value_transforms=None):
+    "extract data from the spreadsheet"
     form_data = {}
     form_name = None
     transform = make_transform(value_transforms or [])
@@ -83,11 +90,13 @@ def read_sheet(sheet, value_transforms=None):
 
 
 def load_field_defs(defs_file):
+    "load field definitions"
     with open(defs_file) as f:
         return json.load(f)
 
 
 def inspect_pdf_fields(form_name):
+    "inspect a pdf for fillable fields"
     cmd = ["pdftk", form_name, "dump_data_fields", "output", "-"]
     p = run(cmd, stdout=PIPE, universal_newlines=True, check=True)
     num = itertools.count()
@@ -106,6 +115,7 @@ def inspect_pdf_fields(form_name):
 
 
 def fill_forms(path_func, field_defs, data, flatten=True):
+    "fill pdf forms"
     for filepath, formdata in data.items():
         if not formdata:
             continue
@@ -117,6 +127,7 @@ def fill_forms(path_func, field_defs, data, flatten=True):
 
 
 def generate_fdf(fields, data):
+    "generate an fdf with to fill out form fields"
     fdf = io.StringIO()
     fdf.write(fdf_head)
     fdf.write("\n".join(fdf_fields(fields, data)))
@@ -141,6 +152,7 @@ trailer
 
 
 def fdf_fields(fields, data):
+    "format fdf fields"
     template = "<< /T ({field_name}) /V ({data}) >>"
     for n, d in data.items():
         field_def = fields.get(n)
@@ -151,6 +163,7 @@ def fdf_fields(fields, data):
 
 
 def fill_form(input_path, fdf, output_path, flatten):
+    "fill a form using fdf data"
     cmd = ["pdftk", input_path,
             "fill_form", "-",
             "output", output_path]
@@ -160,6 +173,7 @@ def fill_form(input_path, fdf, output_path, flatten):
 
 
 def generate_test_data(pdf_files, field_defs):
+    "generate test data with field ids"
     data = {}
     for filepath in pdf_files:
         fields = field_defs.get(filepath, {})
@@ -171,5 +185,6 @@ def generate_test_data(pdf_files, field_defs):
 
 
 def make_transform(value_transforms):
+    "compose a transform"
     apply = lambda v, f: f(v)
     return lambda v: functools.reduce(apply, value_transforms, v)
