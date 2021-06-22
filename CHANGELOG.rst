@@ -1,11 +1,22 @@
 Changelog
 -----------
+2.0.0
+"""""
+:date: 23 June, 2021
+
+* Use pyexcel to load spreadsheet data, supports xlsx, ods, csv, and more
+* Add options to round values, add thousands separators
+* Split codebase up to better allow programmatic use
+* Make .pdf suffix recognition case-insensitive
+* Better handling of invalid input
+* Expanded documentation
+* General code clean-up, refactoring, linting, and reformatting
 
 1.2.1
 """""
 :date: 3 July, 2020
 
-* Don’t crash when subcommand not supplied.
+* Don’t crash when subcommand not supplied. (Thanks @PiDelport for the PR)
 
 1.2.0
 """""

@@ -1,7 +1,7 @@
 pdfforms
 =========
 
-pdfforms is a small utility for populating fillable pdf forms from a csv
+pdfforms is a small utility for populating fillable pdf forms from a spreadsheet
 data source.  It was created with the intent of filling US tax forms using
 tax data prepared with a spreadsheet, but should be equally applicable to
 other forms.
@@ -11,14 +11,20 @@ Features
 
 * Assigns numeric id for each field
 * Generates test pdf showing ids of text fields
-* Merges csv data into final filled pdf
+* Merges spreadsheet data into final filled pdf
+* Works with multiple spreadsheet formats
 * Can process multiple pdfs at a time
+* Can be used as a library or CLI
+* Optional rounding and number formatting
+
 
 Requirements
 ------------
 
-pdfforms requires Python 3.5 or higher and `pdftk`_, which does all the real work.
+pdfforms requires Python 3.5 or higher, pyexcel_ for data loading, and
+pdftk_, which does all the real work.
 
+.. _pyexcel: https://pyexcel.readthedocs.io/en/stable/index.html
 .. _pdftk: https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
 
 Installation
