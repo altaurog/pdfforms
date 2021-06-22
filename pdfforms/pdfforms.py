@@ -1,3 +1,4 @@
+import functools
 import io
 import itertools
 import json
@@ -5,6 +6,20 @@ import os
 from subprocess import PIPE, run
 
 import pyexcel
+
+
+def round_float(value):
+    try:
+        return round(value)
+    except TypeError:
+        return value
+
+
+def comma_format(value):
+    try:
+        return f"{value:,}"
+    except ValueError:
+        return value
 
 
 def inspect(pdf_files, field_defs_file="fields.json", prefix="test/"):
@@ -30,9 +45,10 @@ def fill(
         field_defs_file="fields.json",
         prefix="filled/",
         no_flatten=False,
+        value_transforms=None,
     ):
     sheet = load_sheet(data_file, sheet_name, pyexcel_library)
-    form_data = read_sheet(sheet)
+    form_data = read_sheet(sheet, value_transforms)
     field_defs = load_field_defs(field_defs_file)
     flatten = not no_flatten
     fg = fill_forms(prefix, field_defs, form_data, flatten)
@@ -52,16 +68,17 @@ def load_sheet(file_name, sheet_name, pyexcel_library):
     return pyexcel.get_sheet(**kwargs)
 
 
-def read_sheet(sheet):
+def read_sheet(sheet, value_transforms=None):
     form_data = {}
     form_name = None
+    transform = make_transform(value_transforms or [])
     for row in sheet:
         if isinstance(row[0], str) and row[0].endswith(".pdf"):
             form_name = row[0]
             form_data[form_name] = {}
         elif form_name and  2 < len(row) and isinstance(row[0], int) and row[2]:
             field = str(row[0])
-            form_data[form_name][field] = row[2]
+            form_data[form_name][field] = transform(row[2])
     return form_data
 
 
@@ -151,3 +168,8 @@ def generate_test_data(pdf_files, field_defs):
             if "Text" == field_def.get("type"):
                 d[field_id] = field_id
     return data
+
+
+def make_transform(value_transforms):
+    apply = lambda v, f: f(v)
+    return lambda v: functools.reduce(apply, value_transforms, v)

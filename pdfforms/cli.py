@@ -17,6 +17,11 @@ def inspect_pdfs(args):
 
 def fill_pdfs(args):
     "entry point for fill command"
+    value_transforms = []
+    if args.round:
+        value_transforms.append(pdfforms.round_float)
+    if args.add_commas:
+        value_transforms.append(pdfforms.comma_format)
     pdfforms.fill(
         data_file=args.data_file,
         sheet_name=args.sheet_name,
@@ -24,6 +29,7 @@ def fill_pdfs(args):
         field_defs_file=args.field_defs_file,
         prefix=args.prefix,
         no_flatten=args.no_flatten,
+        value_transforms=value_transforms,
     )
 
 
@@ -55,6 +61,12 @@ def parse_cli(*args):
                             dest="field_defs_file",)
     fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
                             help="location/prefix to which to save filled forms")
+    fill.add_argument("--round", action="store_true",
+                            help="round floating-point numbers",
+                            )
+    fill.add_argument("--add-commas", action="store_true",
+                            help="format numbers with comma as thousands-separator",
+                            )
     fill.add_argument("--no-flatten", action="store_true",
                             help="do not flatten pdf output (leaves form fillable)")
     fill.add_argument("--pyexcel-library",
