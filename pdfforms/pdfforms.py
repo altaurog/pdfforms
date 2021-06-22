@@ -26,11 +26,12 @@ def inspect(pdf_files, field_defs_file="fields.json", prefix="test/"):
 def fill(
         data_file,
         sheet_name=None,
+        pyexcel_library=None,
         field_defs_file="fields.json",
         prefix="filled/",
         no_flatten=False,
     ):
-    sheet = load_sheet(data_file, sheet_name)
+    sheet = load_sheet(data_file, sheet_name, pyexcel_library)
     form_data = read_sheet(sheet)
     field_defs = load_field_defs(field_defs_file)
     flatten = not no_flatten
@@ -39,13 +40,15 @@ def fill(
         print(filepath)
 
 
-def load_sheet(file_name, sheet_name):
+def load_sheet(file_name, sheet_name, pyexcel_library):
     kwargs = {
         "file_name": file_name,
         "column_limit": 3,
     }
     if sheet_name:
         kwargs["sheet_name"] = sheet_name
+    if pyexcel_library:
+        kwargs["library"] = pyexcel_library
     return pyexcel.get_sheet(**kwargs)
 
 

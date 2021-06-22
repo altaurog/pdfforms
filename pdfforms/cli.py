@@ -20,6 +20,7 @@ def fill_pdfs(args):
     pdfforms.fill(
         data_file=args.data_file,
         sheet_name=args.sheet_name,
+        pyexcel_library=args.pyexcel_library,
         field_defs_file=args.field_defs_file,
         prefix=args.prefix,
         no_flatten=args.no_flatten,
@@ -56,6 +57,8 @@ def parse_cli(*args):
                             help="location/prefix to which to save filled forms")
     fill.add_argument("--no-flatten", action="store_true",
                             help="do not flatten pdf output (leaves form fillable)")
+    fill.add_argument("--pyexcel-library",
+                            help="pyexcel library to use for loading data file")
     return parser.parse_args(*args)
 
 
