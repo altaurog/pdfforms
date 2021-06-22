@@ -9,11 +9,12 @@ from . import pdfforms
 
 def inspect_pdfs(args):
     "entry point for inspect command"
-    pdfforms.inspect(
-        pdf_files=args.pdf_file,
-        field_defs_file=args.field_defs_file,
-        prefix=args.prefix,
-    )
+    for filepath in pdfforms.inspect_pdfs(
+            pdf_files=args.pdf_file,
+            field_defs_file=args.field_defs_file,
+            prefix=args.prefix,
+        ):
+        print(filepath)
 
 
 def fill_pdfs(args):
@@ -23,15 +24,16 @@ def fill_pdfs(args):
         value_transforms.append(pdfforms.round_float)
     if args.add_commas:
         value_transforms.append(pdfforms.comma_format)
-    pdfforms.fill(
-        data_file=args.data_file,
-        sheet_name=args.sheet_name,
-        pyexcel_library=args.pyexcel_library,
-        field_defs_file=args.field_defs_file,
-        prefix=args.prefix,
-        no_flatten=args.no_flatten,
-        value_transforms=value_transforms,
-    )
+    for filepath in pdfforms.fill_pdfs(
+            data_file=args.data_file,
+            sheet_name=args.sheet_name,
+            pyexcel_library=args.pyexcel_library,
+            field_defs_file=args.field_defs_file,
+            prefix=args.prefix,
+            no_flatten=args.no_flatten,
+            value_transforms=value_transforms,
+        ):
+        print(filepath)
 
 
 def _make_path(prefix):
