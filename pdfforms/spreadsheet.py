@@ -23,7 +23,7 @@ def read_sheet(sheet, value_transforms=None):
     form_name = None
     transform = make_transform(value_transforms or [])
     for row in sheet:
-        if isinstance(row[0], str) and row[0].endswith(".pdf"):
+        if isinstance(row[0], str) and row[0].lower().endswith(".pdf"):
             form_name = row[0]
             form_data[form_name] = {}
         elif form_name and 2 < len(row) and isinstance(row[0], int) and row[2]:
