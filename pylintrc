@@ -1,0 +1,38 @@
+[MASTER]
+
+# Use multiple processes to speed up Pylint.
+jobs=2
+
+[MESSAGES CONTROL]
+
+disable=too-few-public-methods,
+  invalid-name,
+  bad-continuation,
+  inconsistent-return-statements,
+  misplaced-comparison-constant,
+  missing-docstring
+
+[DESIGN]
+
+max-args=10
+
+[REPORTS]
+
+# Activate the evaluation score.
+score=no
+
+[BASIC]
+
+
+[FORMAT]
+
+# Number of spaces of indent required inside a hanging or continued line.
+indent-after-paren=2
+
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+# (Removed "TODO", which is assumed to be a reminder of something to do later,
+# but not so neccessary that linting should fail.  Added "DEBUG" as an indicator
+# code added for debugging and not meant to be committed.)
+notes=FIXME,XXX,DEBUG
