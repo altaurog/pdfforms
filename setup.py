@@ -24,23 +24,23 @@ def get_version(package_name, default="0.1"):
 
 
 setup(
-    name = package_name,
-    version = get_version(package_name),
-    description = "Populate fillable pdf forms from csv data file",
-    long_description = read("README.rst") + '\n\n' + read("CHANGELOG.rst"),
-    author = "Aryeh Leib Taurog",
-    author_email = "python@aryehleib.com",
-    license = 'MIT',
-    url = "https://github.com/altaurog/pdfforms",
-    packages = [package_name],
-    entry_points = {'console_scripts': ['pdfforms=pdfforms.cli:main']},
-    install_requires = ["pyexcel"],
-    extras_require = {
+    name=package_name,
+    version=get_version(package_name),
+    description="Populate fillable pdf forms from csv data file",
+    long_description=read("README.rst") + "\n\n" + read("CHANGELOG.rst"),
+    author="Aryeh Leib Taurog",
+    author_email="python@aryehleib.com",
+    license="MIT",
+    url="https://github.com/altaurog/pdfforms",
+    packages=[package_name],
+    entry_points={"console_scripts": ["pdfforms=pdfforms.cli:main"]},
+    install_requires=["pyexcel"],
+    extras_require={
         "csv": ["pyexcel-io"],
         "xlsx": ["pyexcel-xlsx"],
         "ods": ["pyexcel-ods"],
     },
-    classifiers = [
+    classifiers=[
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
