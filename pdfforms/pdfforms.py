@@ -4,14 +4,14 @@ from .field_def import load_field_defs, save_field_defs
 
 
 def fill_pdfs(
-        data_file,
-        sheet_name=None,
-        pyexcel_library=None,
-        field_defs_file="fields.json",
-        prefix="filled/",
-        no_flatten=False,
-        value_transforms=None,
-    ):
+    data_file,
+    sheet_name=None,
+    pyexcel_library=None,
+    field_defs_file="fields.json",
+    prefix="filled/",
+    no_flatten=False,
+    value_transforms=None,
+):
     "fill pdf forms with data from a spreadsheet"
     sheet = spreadsheet.load_sheet(data_file, sheet_name, pyexcel_library)
     form_data = spreadsheet.read_sheet(sheet, value_transforms)

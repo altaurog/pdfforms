@@ -24,9 +24,7 @@ def inspect_pdf_fields(form_name):
 
 def fill_form(input_path, fdf, output_path, flatten):
     "fill a form using fdf data"
-    cmd = ["pdftk", input_path,
-            "fill_form", "-",
-            "output", output_path]
+    cmd = ["pdftk", input_path, "fill_form", "-", "output", output_path]
     if flatten:
         cmd.append("flatten")
     run(cmd, input=fdf.encode("utf-8"), check=True)
