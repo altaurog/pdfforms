@@ -1,6 +1,8 @@
 pdfforms
 =========
 
+.. home-start
+
 pdfforms is a small utility for populating fillable pdf forms from a spreadsheet
 data source.  It was created with the intent of filling US tax forms using
 tax data prepared with a spreadsheet, but should be equally applicable to
@@ -31,6 +33,9 @@ Installation
 -------------
 
 To install: ``pip install pdfforms``
+
+.. home-end
+.. cli-use-start
 
 Use
 ---
@@ -153,3 +158,5 @@ allows you to do so with the following steps:
 
    The final, populated pdf files are saved by default to the ``filled/``
    subdirectory.
+
+.. cli-use-end
