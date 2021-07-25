@@ -29,7 +29,7 @@ def read_sheet(sheet, value_transforms=None):
         elif form_name and 2 < len(row) and isinstance(row[0], int) and row[2]:
             field = str(row[0])
             form_data[form_name][field] = transform(row[2])
-    return form_data
+    return {name: data for name, data in form_data.items() if data}
 
 
 def make_transform(value_transforms):

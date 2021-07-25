@@ -7,8 +7,6 @@ from . import fdf, pdftk
 def fill_forms(path_func, field_defs, data, flatten=True):
     "fill pdf forms"
     for filepath, formdata in data.items():
-        if not formdata:
-            continue
         yield filepath
         output_path = path_func(filepath)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
