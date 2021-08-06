@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 "cli to inspect and fill pdf fillable forms"
 import argparse
-import os
 import sys
 
 from . import pdfforms
@@ -36,10 +35,6 @@ def fill_pdfs(args):
         print(filepath)
 
 
-def _make_path(prefix):
-    return lambda path: prefix + os.path.basename(path)
-
-
 def parse_cli(*args):
     "parse command line arguments"
     parser = argparse.ArgumentParser()
@@ -61,7 +56,6 @@ def parse_cli(*args):
         "-p",
         "--prefix",
         default="test/",
-        type=_make_path,
         help="location/prefix to which to save test files",
     )
 
@@ -80,7 +74,6 @@ def parse_cli(*args):
         "-p",
         "--prefix",
         default="filled/",
-        type=_make_path,
         help="location/prefix to which to save filled forms",
     )
     fill.add_argument(
