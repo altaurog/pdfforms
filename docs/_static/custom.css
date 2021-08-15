@@ -1,0 +1,15 @@
+dl {
+    margin-bottom: 3em;
+}
+
+#module-pdfforms\.fill .sig-param::before ,
+#module-pdfforms\.pdfforms .sig-param::before {
+    content: "\A    ";
+    white-space: pre;
+}
+
+#module-pdfforms\.fill .sig-param + .sig-paren::before ,
+#module-pdfforms\.pdfforms .sig-param + .sig-paren::before {
+    content: "\A";
+    white-space: pre;
+}

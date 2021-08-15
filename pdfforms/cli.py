@@ -35,46 +35,53 @@ def fill_pdfs(args):
         print(filepath)
 
 
-def parse_cli(*args):
+def cli_parser():
     "parse command line arguments"
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
     # TODO: Make this a parameter of add_subparsers() in Python 3.7+
     subparsers.required = True
 
-    inspect = subparsers.add_parser("inspect")
+    inspect = subparsers.add_parser(
+        "inspect",
+        description="""
+        Inspect one or more pdf files for forms and number the form fields.
+        For each pdf containing form fields, a test file is generated showing
+        the number of each field.
+    """,
+    )
     inspect.set_defaults(func=inspect_pdfs)
     inspect.add_argument("pdf_file", nargs="+")
-    inspect.add_argument(
-        "-f",
-        "--field-defs",
-        default="fields.json",
-        help="file in which to save field defs",
-        dest="field_defs_file",
-    )
     inspect.add_argument(
         "-p",
         "--prefix",
         default="test/",
-        help="location/prefix to which to save test files",
+        help="location/prefix to which to save test files (test/)",
     )
-
-    fill = subparsers.add_parser("fill")
-    fill.set_defaults(func=fill_pdfs)
-    fill.add_argument("data_file", help="input data file")
-    fill.add_argument("-s", "--sheet-name", help="input sheet name")
-    fill.add_argument(
+    inspect.add_argument(
         "-f",
         "--field-defs",
         default="fields.json",
-        help="file from which to load field defs",
+        help="""file in which to save field defs (fields.json).
+        In general it should not be necessary to change this.
+        """,
         dest="field_defs_file",
     )
+
+    fill = subparsers.add_parser(
+        "fill",
+        description="""
+        Fill one or more pdf forms with data from specified datafile.
+    """,
+    )
+    fill.set_defaults(func=fill_pdfs)
+    fill.add_argument("data_file", help="spreadsheet data file")
+    fill.add_argument("-s", "--sheet-name", help="input sheet name (first sheet)")
     fill.add_argument(
         "-p",
         "--prefix",
         default="filled/",
-        help="location/prefix to which to save filled forms",
+        help="location/prefix to which to save filled forms (filled/)",
     )
     fill.add_argument(
         "--round",
@@ -89,11 +96,28 @@ def parse_cli(*args):
     fill.add_argument(
         "--no-flatten",
         action="store_true",
-        help="do not flatten pdf output (leaves form fillable)",
+        help="do not flatten pdf output, leaving form fillable (False).",
     )
     fill.add_argument(
-        "--pyexcel-library", help="pyexcel library to use for loading data file"
+        "--pyexcel-library",
+        help="""pyexcel library to use for loading data file
+            (only necessary if more than one library is available for specified data file)
+        """,
     )
+    fill.add_argument(
+        "-f",
+        "--field-defs",
+        default="fields.json",
+        help="""file from which to load field defs (fields.json).
+            In general it should not be necessary to change this.
+        """,
+        dest="field_defs_file",
+    )
+    return parser
+
+
+def parse_cli(*args):
+    parser = cli_parser()
     return parser.parse_args(*args)
 
 

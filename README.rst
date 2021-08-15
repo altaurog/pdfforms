@@ -35,10 +35,17 @@ Installation
 To install: ``pip install pdfforms``
 
 .. home-end
-.. cli-use-start
 
-Use
----
+Documentation
+--------------
+
+For complete documentation, see https://pdfforms.readthedocs.io/
+
+
+Example
+--------
+
+.. cli-example-start
 
 Let's say you have a spreadsheet with your tax calculations.  You want to
 populate your tax forms with the data from the spreadsheet.  pdfforms
@@ -159,4 +166,4 @@ allows you to do so with the following steps:
    The final, populated pdf files are saved by default to the ``filled/``
    subdirectory.
 
-.. cli-use-end
+.. cli-example-end

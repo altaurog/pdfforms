@@ -7,7 +7,7 @@ Changelog
 
 * Use pyexcel to load spreadsheet data, supports xlsx, ods, csv, and more
 * Add options to round values, add thousands separators
-* Split codebase up to better allow programmatic use
+* Split codebase up and publish an API
 * Make .pdf suffix recognition case-insensitive
 * Better handling of invalid input
 * Expanded documentation

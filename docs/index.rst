@@ -9,7 +9,10 @@ Overview
    :hidden:
 
    Overview <self>
-   cli-use
+   cli-doc
+   cli-example
+   api-example
+   api-doc
    changelog
    authors
    license
