@@ -3,7 +3,7 @@ Changelog
 
 2.0.0
 """""
-:date: 24 June, 2021
+:date: 15 Aug, 2021
 
 * Use pyexcel to load spreadsheet data, supports xlsx, ods, csv, and more
 * Add options to round values, add thousands separators
