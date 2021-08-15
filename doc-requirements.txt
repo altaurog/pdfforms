@@ -1,0 +1,4 @@
+-r requirements.txt
+alabaster==0.7.12
+Sphinx==4.1.2
+sphinxcontrib-autoprogram==0.1.7

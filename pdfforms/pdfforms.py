@@ -1,127 +1,74 @@
-#!/usr/bin/env python3
-import argparse
-import csv
-import io
-import itertools
-import json
-import os
-import sys
-from subprocess import run, PIPE
-
-
-def inspect_pdfs(args):
-    try:
-        with open(args.field_defs, "r") as f:
-            field_defs = json.load(f)
-    except OSError:
-        field_defs = {}
-    for filename in args.pdf_file:
-        field_defs[filename] = inspect_pdf_fields(filename)
-    with open(args.field_defs, "w") as f:
-        json.dump(field_defs, f, indent=4)
-    test_data = generate_test_data(args.pdf_file, field_defs)
-    fg = fill_forms(args.prefix, field_defs, test_data, True)
-    for filepath in fg:
-        print(filepath)
-
-
-def fill_pdfs(args):
-    form_data = read_data(args.data_file)
-    field_defs = load_field_defs(args.field_defs)
-    flatten = not args.no_flatten
-    fg = fill_forms(args.prefix, field_defs, form_data, flatten)
-    for filepath in fg:
-        print(filepath)
-
-
-def read_data(instream):
-    form_data = {}
-    for row in csv.reader(instream):
-        if row and row[0].endswith(".pdf"):
-            form_data[row[0]] = f = {}
-        elif 2 < len(row) and row[0] and row[2]:
-            f[str(row[0])] = row[2]
-    return form_data
-
-
-def load_field_defs(defs_file):
-    with open(defs_file) as f:
-        return json.load(f)
-
-
-def inspect_pdf_fields(form_name):
-    cmd = ["pdftk", form_name, "dump_data_fields", "output", "-"]
-    p = run(cmd, stdout=PIPE, universal_newlines=True, check=True)
-    num = itertools.count()
-    fields = {}
-    for line in p.stdout.splitlines():
-        content = line.split(": ", 1)
-        if ["---"] == content:
-            fields[str(next(num))] = field_data = {}
-        elif 2 == len(content):
-            key = content[0][5:].lower()
-            if "stateoption" == key:
-                field_data.setdefault(key, []).append(content[1])
-            else:
-                field_data[key] = content[1]
-    return fields
-
-
-def fill_forms(path_func, field_defs, data, flatten=True):
-    for filepath, formdata in data.items():
-        if not formdata:
-            continue
-        yield filepath
-        output_path = path_func(filepath)
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        fdf_str = generate_fdf(field_defs[filepath], formdata)
-        fill_form(filepath, fdf_str, output_path, flatten)
-
-
-def generate_fdf(fields, data):
-    fdf = io.StringIO()
-    fdf.write(fdf_head)
-    fdf.write("\n".join(fdf_fields(fields, data)))
-    fdf.write(fdf_tail)
-    return fdf.getvalue()
-
-
-fdf_head = """%FDF-1.2
-%âãÏÓ
-1 0 obj 
-<< /FDF 
-<< /Fields [
 """
+High-level library functions to inspect and fill pdf fillable forms.
+These functions provide an programmatic interface similar to the command-line
+interface.
 
-fdf_tail = """
-] >> >>
-endobj 
-trailer
-<< /Root 1 0 R >>
-%%EOF
+.. note:: These functions return a generator.
+
+    If you don’t iterate the results, they won’t do anything.
 """
+from typing import Callable, Iterable, Iterator, Optional
+from . import fill, inspect, spreadsheet
+from .field_def import load_field_defs, save_field_defs
 
 
-def fdf_fields(fields, data):
-    template = "<< /T ({field_name}) /V ({data}) >>"
-    for n, d in data.items():
-        field_def = fields.get(n)
-        if field_def:
-            field_name = field_def.get("name")
-            if field_name:
-                yield template.format(field_name=field_name, data=d)
+def inspect_pdfs(
+    pdf_files: Iterable[str],
+    field_defs_file: str = "fields.json",
+    prefix: str = "test/",
+) -> Iterator[str]:
+    """
+    inspect pdf for fillable form fields
+
+    This is essentially the same as `pdfforms inspect` command.
+
+    :param pdf_files: file paths to inspect
+    :param field_defs_file: path to which to save json field definitions
+    :param prefix: prefix for saving test files
+    :return: a generator of inspected file names.
+        Be sure to iterate it or nothing will happen.
+    """
+    field_defs = load_field_defs(field_defs_file, fail_silently=True)
+    field_defs = inspect.inspect(pdf_files, field_defs)
+    save_field_defs(field_defs_file, field_defs)
+    test_data = _generate_test_data(pdf_files, field_defs)
+    yield from fill.fill_forms(prefix, field_defs, test_data, flatten=True)
 
 
-def fill_form(input_path, fdf, output_path, flatten):
-    cmd = ["pdftk", input_path,
-            "fill_form", "-",
-            "output", output_path]
-    if flatten:
-        cmd.append("flatten")
-    run(cmd, input=fdf.encode("utf-8"), check=True)
+def fill_pdfs(
+    data_file: str,
+    sheet_name: Optional[str] = None,
+    pyexcel_library: Optional[str] = None,
+    field_defs_file: str = "fields.json",
+    prefix: str = "filled/",
+    no_flatten: bool = False,
+    value_transforms: Optional[Iterable[Callable]] = None,
+) -> Iterator[str]:
+    """
+    fill pdf forms with data from a spreadsheet
+
+    This is essentially the same as `pdfforms fill` command.
+
+    :param data_file: path of spreadsheet datafile
+    :param sheet_name: sheet name, defaults to first sheet
+    :param field_defs_file: path from which to load json field definitions
+    :param prefix: prefix for saving filled pdf files
+    :param no_flatten: do not flatten output pdf files
+    :param value_transforms: value transformation/format functions
+        to be called in order on each data value before inserting
+        it into the pdf form.  See api example for more information.
+    :return: a generator of filled form file names.
+        Be sure to iterate it or nothing will happen.
+    """
+    sheet = spreadsheet.load_sheet(data_file, sheet_name, pyexcel_library)
+    form_data = spreadsheet.read_sheet(sheet, list(value_transforms))
+    field_defs = load_field_defs(field_defs_file)
+    flatten = not no_flatten
+    yield from fill.fill_forms(prefix, field_defs, form_data, flatten)
 
 
-def generate_test_data(pdf_files, field_defs):
+def _generate_test_data(pdf_files, field_defs):
+    "generate test data with field ids"
     data = {}
     for filepath in pdf_files:
         fields = field_defs.get(filepath, {})
@@ -130,44 +77,3 @@ def generate_test_data(pdf_files, field_defs):
             if "Text" == field_def.get("type"):
                 d[field_id] = field_id
     return data
-
-
-def make_path(prefix):
-    return lambda path: prefix + os.path.basename(path)
-
-
-def parse_cli(*args):
-    parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(title="subcommands", dest="subcommand")
-    # TODO: Make this a parameter of add_subparsers() in Python 3.7+
-    subparsers.required = True
-
-    inspect = subparsers.add_parser("inspect")
-    inspect.set_defaults(func=inspect_pdfs)
-    inspect.add_argument("pdf_file", nargs="+")
-    inspect.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file in which to save field defs")
-    inspect.add_argument("-p", "--prefix", default="test/", type=make_path,
-                            help="location/prefix to which to save test files")
-
-    fill = subparsers.add_parser("fill")
-    fill.set_defaults(func=fill_pdfs)
-    fill.add_argument("data_file", default='-',
-                            type=argparse.FileType('r', encoding='utf-8'),
-                            help="csv input data file")
-    fill.add_argument("-f", "--field-defs", default="fields.json",
-                            help="file from which to load field defs")
-    fill.add_argument("-p", "--prefix", default="filled/", type=make_path,
-                            help="location/prefix to which to save filled forms")
-    fill.add_argument("--no-flatten", action="store_true",
-                            help="do not flatten pdf output (leaves form fillable)")
-    return parser.parse_args(*args)
-
-
-def main(argv=None):
-    args = parse_cli(argv or sys.argv[1:])
-    args.func(args)
-
-
-if __name__ == "__main__":
-    main()

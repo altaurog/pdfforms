@@ -10,9 +10,9 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -22,7 +22,7 @@ copyright = "2021, Aryeh Leib Taurog"
 author = "Aryeh Leib Taurog"
 
 # The full version, including alpha/beta/rc tags
-release = "1.2.1"
+release = "2.0.0"
 master_doc = "index"
 
 # -- General configuration ---------------------------------------------------
@@ -33,6 +33,7 @@ master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
+    "sphinxcontrib.autoprogram",
     "alabaster",
 ]
 
@@ -71,3 +72,7 @@ html_theme_options = {
 html_static_path = ["_static"]
 
 autosectionlabel_prefix_document = True
+
+autodoc_member_order = 'bysource'
+autodoc_typehints = 'description'
+python_use_unqualified_type_names = True
