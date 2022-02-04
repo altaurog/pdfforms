@@ -1,24 +1,20 @@
 "fdf functions"
+from encodings import utf_8
 import io
 
-fdf_head = """%FDF-1.2
-%âãÏÓ
-1 0 obj 
-<< /FDF 
-<< /Fields [
+fdf_head = """<?xml version="1.0" encoding="UTF-8"?>
+<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">
+   <fields>
 """
 
 fdf_tail = """
-] >> >>
-endobj 
-trailer
-<< /Root 1 0 R >>
-%%EOF
+   </fields>
+</xfdf>
 """
 
 
 def generate_fdf(fields, data):
-    "generate an fdf with to fill out form fields"
+    "generate an xfdf with to fill out form fields"
     fdf = io.StringIO()
     fdf.write(fdf_head)
     fdf.write("\n".join(fdf_fields(fields, data)))
@@ -27,8 +23,8 @@ def generate_fdf(fields, data):
 
 
 def fdf_fields(fields, data):
-    "format fdf fields"
-    template = "<< /T ({field_name}) /V ({data}) >>"
+    "format xfdf fields"
+    template = "      <field name=\"{field_name}\">\n      <value>{data}</value>\n      </field>"
     for n, d in data.items():
         field_def = fields.get(n)
         if field_def:

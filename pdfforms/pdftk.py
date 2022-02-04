@@ -5,7 +5,7 @@ from subprocess import PIPE, run
 
 def inspect_pdf_fields(form_name):
     "inspect a pdf for fillable fields"
-    cmd = ["pdftk", form_name, "dump_data_fields", "output", "-"]
+    cmd = ["pdftk", form_name, "dump_data_fields_utf8", "output", "-"]
     p = run(cmd, stdout=PIPE, universal_newlines=True, check=True)
     num = itertools.count()
     fields = {}

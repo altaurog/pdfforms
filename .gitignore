@@ -1,6 +1,7 @@
 *.py[cdo]
 *.pdf
 *.fdf
+*.xfdf
 *.json
 *.csv
 *.ods
